@@ -1,14 +1,12 @@
-package client;
+package main.java.client;
 
 import com.google.gson.Gson;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
-import message.MessageAuthToken;
-import message.MessageLogin;
+import main.java.message.MessageAuthToken;
+import main.java.message.MessageLogin;
 
-import javax.ws.rs.core.MediaType;
-import java.io.BufferedReader;
 import java.util.Scanner;
 
 
