@@ -1,4 +1,4 @@
-package main.java.otp;
+package otp;
 
 import com.google.common.base.Strings;
 

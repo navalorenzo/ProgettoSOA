@@ -1,4 +1,4 @@
-package main.java.message;
+package message;
 
 public class MessageAuthToken {
     public String authTicket;

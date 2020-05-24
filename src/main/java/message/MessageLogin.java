@@ -1,4 +1,4 @@
-package main.java.message;
+package message;
 
 public class MessageLogin {
     public String username;

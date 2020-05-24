@@ -1,4 +1,4 @@
-package main.java.otp;
+package otp;
 
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;

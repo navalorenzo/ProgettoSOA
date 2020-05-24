@@ -1,4 +1,4 @@
-package main.java.otp;
+package otp;
 
 import java.util.ArrayList;
 

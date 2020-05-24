@@ -1,4 +1,4 @@
-package main.java.otp;
+package otp;
 
 public class TOTPConf {
     private String secret; //Secret key [REQUIRED]
