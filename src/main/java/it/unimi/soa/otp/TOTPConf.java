@@ -1,4 +1,4 @@
-package otp;
+package it.unimi.soa.otp;
 
 public class TOTPConf {
     private String secret; //Secret key [REQUIRED]

@@ -1,12 +1,9 @@
-package client;
-
-
-import java.util.Scanner;
+package it.unimi.soa.client;
 
 
 public class KerberosClient {
 /*    public static void main(String[] args) {
-        // init jersey client
+        // init jersey it.unimi.soa.client
 
         // ask for authentication
         Scanner reader = new Scanner(System.in);
@@ -23,7 +20,7 @@ public class KerberosClient {
     /*private static MessageAuthToken requestAuth(String username) {
         String path = "/auth/login";
         String argument = new Gson().toJson(new MessageLogin(username));
-        WebResource resource = client.resource(SERVER_URL + ":" + SERVER_PORT + path);
+        WebResource resource = it.unimi.soa.client.resource(SERVER_URL + ":" + SERVER_PORT + path);
         return new Gson().fromJson(resource.type("application/json").post(ClientResponse.class, argument).getEntity(String.class), MessageAuthToken.class);
     }*/
 }

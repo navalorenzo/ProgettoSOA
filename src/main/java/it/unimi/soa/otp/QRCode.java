@@ -1,4 +1,4 @@
-package otp;
+package it.unimi.soa.otp;
 
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;

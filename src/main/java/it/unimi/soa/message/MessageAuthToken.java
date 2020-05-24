@@ -1,4 +1,4 @@
-package message;
+package it.unimi.soa.message;
 
 public class MessageAuthToken {
     public String authTicket;
