@@ -19,7 +19,10 @@ public class Generator {
     public String generateNow() {
 
         Date date = new Date();
-        long secondsEpoch = (date.getTime()) / 1000L;
+        long millis = date.getTime();
+        long secondsEpoch = millis / 1000L;
+
+        System.out.println(millis);
 
         long period = this.getConf().getPeriod();
         long timeSlice = secondsEpoch / period;
@@ -51,6 +54,7 @@ public class Generator {
         }
 
         byte[] fullHmac = mac.doFinal(time);
+        printByteArray(fullHmac);
 
         String a = bytesToHex(fullHmac);
         char last = a.charAt(a.length() - 1);
@@ -60,7 +64,7 @@ public class Generator {
                 splitted[decimal + 1] & 0xff,
                 splitted[decimal + 2] & 0xff,
                 splitted[decimal + 3] & 0xff};
-        String ify = getIntToByteArray(got);
+        String ify = intArrayToByteString(got);
         long token = (long) (Integer.parseInt(ify, 16) % (Math.pow(10, this.getConf().getDigits())));
 
         return StringUtils.leftPad(String.valueOf(token), this.getConf().getDigits(), "0");
@@ -84,10 +88,11 @@ public class Generator {
         System.out.println();
     }
 
-    public String getIntToByteArray(int[] bytes) {
+    public String intArrayToByteString(int[] bytes) {
         String out = "";
         for (int i : bytes) {
-            out += Integer.toHexString(i);
+            String hexval = Integer.toHexString(i);
+            out += StringUtils.leftPad(hexval, 2, "0");
         }
         return out;
     }
