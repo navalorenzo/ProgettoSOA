@@ -16,14 +16,11 @@ public class Generator {
         this.conf = conf;
     }
 
-    public String generateNow() {
+    public String generateOne() {
 
         Date date = new Date();
         long millis = date.getTime();
         long secondsEpoch = millis / 1000L;
-
-        System.out.println(millis);
-
         long period = this.getConf().getPeriod();
         long timeSlice = secondsEpoch / period;
 
@@ -54,7 +51,6 @@ public class Generator {
         }
 
         byte[] fullHmac = mac.doFinal(time);
-        printByteArray(fullHmac);
 
         String a = bytesToHex(fullHmac);
         char last = a.charAt(a.length() - 1);
@@ -71,7 +67,7 @@ public class Generator {
     }
 
 
-    public static String bytesToHex(byte[] bytes) {
+    private static String bytesToHex(byte[] bytes) {
         char[] hexArray = "0123456789ABCDEF".toCharArray();
         char[] hexChars = new char[bytes.length * 2];
         for (int j = 0; j < bytes.length; j++) {
@@ -82,19 +78,37 @@ public class Generator {
         return new String(hexChars);
     }
 
-    public void printByteArray(byte[] bytes) {
+    private void printByteArray(byte[] bytes) {
         for (byte b : bytes)
             System.out.print(String.format("%02X ", b));
         System.out.println();
     }
 
-    public String intArrayToByteString(int[] bytes) {
+    private String intArrayToByteString(int[] bytes) {
         String out = "";
         for (int i : bytes) {
             String hexval = Integer.toHexString(i);
             out += StringUtils.leftPad(hexval, 2, "0");
         }
         return out;
+    }
+
+    public void run() {
+        String curToken = "", newToken;
+
+        while (true) {
+            try {
+                newToken = this.generateOne();
+                if (!curToken.equals(newToken)) {
+                    curToken = newToken;
+                    System.out.println("New token: " + curToken);
+                }
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                System.err.println();
+            }
+        }
+
     }
 }
 
