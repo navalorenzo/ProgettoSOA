@@ -13,6 +13,8 @@ public class JettyServer {
         ServletHandler handler = new ServletHandler();
         server.setHandler(handler);
         handler.addServletWithMapping(BlockingServlet.class, "/status");
+        handler.addServletWithMapping(AnotherServlet.class, "/anotherstatus/ciao");
+
 
         ServerConnector connector = new ServerConnector(server);
         connector.setPort(8090);
