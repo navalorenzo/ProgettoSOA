@@ -1,23 +1,18 @@
 
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
-@Path("/hello")
-public class RestController {
+@WebServlet(name = "RestServlet", urlPatterns = {"hello"}, loadOnStartup = 1)
+public class RestController extends HttpServlet {
 
-    private HttpServletRequest Reqq;
-
-    @GET
-    @Path("/home")
-    @Produces(MediaType.TEXT_PLAIN)
-    public Response read(@Context HttpHeaders httpheaders, @Context HttpServletRequest req) {
-        Reqq = req;
-        return Response.ok("ccc").build();
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println(request.getRemoteAddr());
+        response.getWriter().print("Howdy");
     }
+
+
 }

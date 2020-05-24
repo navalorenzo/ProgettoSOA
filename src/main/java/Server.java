@@ -1,5 +1,5 @@
 
-import org.glassfish.jersey.jetty.JettyHttpContainerFactory;
+import org.glassfish.jersey.jetty.servlet.JettyWebContainerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 
 import javax.ws.rs.core.UriBuilder;
@@ -11,6 +11,11 @@ public class Server {
 
         URI baseUri = UriBuilder.fromUri("http://127.0.0.1/").port(8050).build();
         ResourceConfig config = new ResourceConfig(RestController.class);
-        org.eclipse.jetty.server.Server server = JettyHttpContainerFactory.createServer(baseUri, config);
+        try {
+            org.eclipse.jetty.server.Server server = JettyWebContainerFactory.create(baseUri, RestController.class);
+            server.join();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
