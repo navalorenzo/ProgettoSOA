@@ -1,13 +1,13 @@
 package it.unimi.soa.otp;
 
 import com.google.common.base.Strings;
+import org.apache.commons.codec.binary.Base32;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
 public class Generator {
@@ -21,7 +21,7 @@ public class Generator {
         this.conf = conf;
     }
 
-    public ArrayList<String> generateNow() {
+    public String generateNow() {
 
         Date date1 = null;
         try {
@@ -29,21 +29,20 @@ public class Generator {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        long secondsEpoch = date1.getTime() / 1000L;
-        System.out.println(secondsEpoch);
-        /*Date date = new Date();
-        long secondsEpoch = (date.getTime()) / 1000L;*/
 
-        ArrayList<String> generated = new ArrayList<>();
+        long secondsEpoch = date1.getTime() / 1000L;
+
+        /*
+        Date date = new Date();
+        long secondsEpoch = (date.getTime()) / 1000L;
+*/
         long period = this.getConf().getPeriod();
-        for (long i = secondsEpoch - period; i < (secondsEpoch + period); i = i + 1) {
-            long timeSlice = /*Math.floorDiv(i, period);*/ 51464208;
-            //System.out.println(timeSlice);
-            String paddedHex = Strings.padStart(Long.toHexString(timeSlice), 16, '0');
-            byte[] m = DatatypeConverter.parseHexBinary(paddedHex);
-            generated.add(calculateToken(m));
-        }
-        return generated;
+
+        long timeSlice = secondsEpoch / period;
+        String paddedHex = Strings.padStart(Long.toHexString(timeSlice), 16, '0');
+
+        byte[] m = DatatypeConverter.parseHexBinary(paddedHex);
+        return calculateToken(m);
     }
 
     public TOTPConf getConf() {
@@ -53,17 +52,14 @@ public class Generator {
     private String calculateToken(byte[] time) {
         Mac mac = null;
         SecretKeySpec secretKeySpec;
+
         String key = this.getConf().getSecret();
-        String algo = null;
-        if (this.getConf().getAlgorihtm() == "SHA1")
-            algo = HMAC_SHA1;
-        else if (this.getConf().getAlgorihtm() == "SHA256")
-            algo = HMAC_SHA256;
-        else if (this.getConf().getAlgorihtm() == "SHA512")
-            algo = HMAC_SHA512;
+        String algo = "Hmac" + this.getConf().getAlgorihtm();
+
+        byte[] decoded = new Base32().decode(key);
 
         try {
-            secretKeySpec = new SecretKeySpec(key.getBytes(), algo);
+            secretKeySpec = new SecretKeySpec(decoded, algo);
             mac = Mac.getInstance(algo);
             mac.init(secretKeySpec);
         } catch (Exception e) {
@@ -72,19 +68,15 @@ public class Generator {
         }
 
         byte[] fullHmac = mac.doFinal(time);
-        printByteArray(time);
-        String a = bytesToHex(fullHmac);
-        System.out.println(a);
-        System.exit(1);
-
+        printByteArray(fullHmac);
+        // Da qui in giu tutto ok
         //String a = "af16868fe5db00c15875f6a7f899f528ab805e9a";
-        //System.out.println(a);
+
+        String a = bytesToHex(fullHmac);
+
         char last = a.charAt(a.length() - 1);
-        //System.out.println(last);
         int decimal = Integer.parseInt(String.valueOf(last), 16);
-        //System.out.println(decimal);
         byte[] splitted = DatatypeConverter.parseHexBinary(a);
-        //printByteArray(splitted);
         if (decimal < 4)
             decimal += 4;
         int[] got = {splitted[splitted.length - decimal] & 0x7f,
@@ -93,14 +85,9 @@ public class Generator {
                 splitted[splitted.length - decimal + 3] & 0xff};
         String ify = getIntToByteArray(got);
         long token = (long) (Integer.parseInt(ify, 16) % (Math.pow(10, this.getConf().getDigits())));
-        System.out.println(token);
-        /*
-        String hex = a.substring(a.length() - decimal - 10, a.length() - decimal - 2);
-        System.out.println(hex);
-        BigInteger bi = new BigInteger(hex, 16);
-        //System.out.println(bi);
-        String token = bi.toString(10).substring(String.valueOf(bi).length() - this.getConf().getDigits());
-        System.out.println(token);*/
+
+        System.out.println("Token:" + token);
+
         return String.valueOf(token);
         //return toHexString(mac.doFinal(time.getBytes()));
     }

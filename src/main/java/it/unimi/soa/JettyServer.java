@@ -23,3 +23,5 @@ public class JettyServer {
 
     }
 }
+
+//https://www.baeldung.com/jetty-embedded
