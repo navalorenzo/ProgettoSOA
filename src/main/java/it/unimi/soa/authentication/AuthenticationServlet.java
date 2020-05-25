@@ -3,6 +3,7 @@ package it.unimi.soa.authentication;
 import com.google.gson.Gson;
 import it.unimi.soa.message.auth.MessageAuthRequest;
 import it.unimi.soa.message.auth.MessageAuthToken;
+import it.unimi.soa.utilities.SharedPassword;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -18,8 +19,7 @@ public class AuthenticationServlet extends HttpServlet {
         String ipAddr = request.getRemoteAddr() + request.getRemotePort();
         String userPassword = UserDB.getInstance().getPassword(messageAuthRequest.username);
 
-        // TODO: PLACE THIS IN A VAULT
-        String ticketGrantingPassword = "paperino";
+        String ticketGrantingPassword = SharedPassword.getASTGSKey();
 
         // create response packet
         try {

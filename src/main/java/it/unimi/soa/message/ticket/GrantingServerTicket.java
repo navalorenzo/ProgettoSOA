@@ -9,6 +9,7 @@ public class GrantingServerTicket {
 
     public GrantingServerTicket() {}
 
+    // TODO: i timestamp sono stringhe???
     public GrantingServerTicket(String username, String ipAddr, String timestamp, String lifetime, String authenticator) {
         this.username = username;
         this.ipAddr = ipAddr;

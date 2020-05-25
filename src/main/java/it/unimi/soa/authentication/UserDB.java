@@ -21,7 +21,7 @@ public class UserDB {
 
     public String getPassword(String username) {
         // TODO: STUB, PLS FIX
-        return "password a caso";
+        return "password";
         //return userDB.get(username);
     }
 }

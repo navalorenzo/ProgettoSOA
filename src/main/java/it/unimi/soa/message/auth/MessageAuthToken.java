@@ -2,7 +2,7 @@ package it.unimi.soa.message.auth;
 
 import com.google.gson.Gson;
 import it.unimi.soa.message.ticket.GrantingServerTicket;
-import it.unimi.soa.message.ticket.MessageTicketRequest;
+import it.unimi.soa.message.ticket.EncryptedTicket;
 import it.unimi.soa.message.ticket.UserTicket;
 import it.unimi.soa.utilities.CipherModule;
 
@@ -45,7 +45,7 @@ public class MessageAuthToken {
         byte[] clientTicket = CipherModule.encrypt(userPassword.toCharArray(), authenticatorTicket.getBytes());
 
         // create message for the ticket-granting server
-        authTicket = new Gson().toJson(new MessageTicketRequest(clientTicket));
+        authTicket = new Gson().toJson(new EncryptedTicket(clientTicket));
         return this;
     }
 }
