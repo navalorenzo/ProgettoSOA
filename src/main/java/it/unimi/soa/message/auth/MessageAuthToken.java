@@ -1,7 +1,9 @@
 package it.unimi.soa.message.auth;
 
 import com.google.gson.Gson;
+import it.unimi.soa.message.ticket.GrantingServerTicket;
 import it.unimi.soa.message.ticket.MessageTicketRequest;
+import it.unimi.soa.message.ticket.UserTicket;
 import it.unimi.soa.utilities.CipherModule;
 
 import javax.crypto.*;
@@ -29,20 +31,18 @@ public class MessageAuthToken {
         long authenticator = secureRandom.nextLong();
 
         /* the authenticator is needed to prove that the person using a ticket is the same person to whom that ticket was issued. */
-        String ticket = username + "#" + ipAddr + "#" + timestamp + "#" + LIFETIME + "#" + authenticator;
+        GrantingServerTicket ticket = new GrantingServerTicket(username, ipAddr, String.valueOf(timestamp), String.valueOf(LIFETIME), String.valueOf(authenticator));
 
         // encrypt for the ticket-granting server
-        byte[] grantingServerTicket = CipherModule.encrypt(ticketGrantingPassword.toCharArray(), ticket.getBytes());
+        byte[] grantingServerTicket = CipherModule.encrypt(ticketGrantingPassword.toCharArray(), new Gson().toJson(ticket).getBytes());
 
         // add authenticator to the client
-        byte[] authenticatorTicket = new byte[grantingServerTicket.length + ("#" + authenticator).getBytes().length];
-        System.arraycopy(grantingServerTicket, 0, authenticatorTicket, 0, grantingServerTicket.length);
-        System.arraycopy(String.valueOf(authenticator).getBytes(), 0, authenticatorTicket, grantingServerTicket.length, String.valueOf(authenticator).getBytes().length);
+        String authenticatorTicket = new Gson().toJson(new UserTicket(String.valueOf(authenticator), grantingServerTicket));
 
         /* Message = [[TICKET]k_AS/TGS, Authenticator]k_Client */
 
         // encrypt for the client
-        byte[] clientTicket = CipherModule.encrypt(userPassword.toCharArray(), authenticatorTicket);
+        byte[] clientTicket = CipherModule.encrypt(userPassword.toCharArray(), authenticatorTicket.getBytes());
 
         // create message for the ticket-granting server
         authTicket = new Gson().toJson(new MessageTicketRequest(clientTicket));
