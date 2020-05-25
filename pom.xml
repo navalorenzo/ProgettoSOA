@@ -50,6 +50,11 @@
             <version>1.14</version>
         </dependency>
         <!-- 2FA END -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.6</version>
+        </dependency>
     </dependencies>
 
     <build>

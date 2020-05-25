@@ -1,11 +1,11 @@
-package it.unimi.soa;
+package it.unimi.soa.ticket;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class AnotherServlet extends HttpServlet {
+public class TicketGrantingServlet extends HttpServlet {
 
     protected void doGet(
             HttpServletRequest request,
