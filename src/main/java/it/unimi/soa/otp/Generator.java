@@ -7,31 +7,58 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Generator {
     private TOTPConf conf;
 
+    // Token should be valid for period * 2
+    private ArrayList<String> validTokens = new ArrayList<>();
+
     public Generator(TOTPConf conf) {
         this.conf = conf;
     }
 
-    public String generateOne() {
+    /**
+     * Calls the token generator
+     *
+     * @return a string representing the current token
+     */
+    public ArrayList<String> generate() {
+
+        ArrayList<String> validTokens = new ArrayList<>();
 
         Date date = new Date();
         long millis = date.getTime();
         long secondsEpoch = millis / 1000L;
-        long period = this.getConf().getPeriod();
-        long timeSlice = secondsEpoch / period;
 
+        long period = this.getConf().getPeriod();
+
+        long timeSlice = secondsEpoch / period;
         byte[] m = ByteBuffer.allocate(8).putLong(timeSlice).array();
-        return calculateToken(m);
+        validTokens.add(calculateToken(m));
+
+        timeSlice = (secondsEpoch + period) / period;
+        m = ByteBuffer.allocate(8).putLong(timeSlice).array();
+        validTokens.add(calculateToken(m));
+
+        return validTokens;
     }
 
+    /**
+     * @return the 2FA configuration
+     */
     public TOTPConf getConf() {
         return conf;
     }
 
+    /**
+     * Contains the logic of the RFC6238
+     *
+     * @param time is the epoch in seconds
+     * @return the token for the epoch
+     */
     private String calculateToken(byte[] time) {
         Mac mac = null;
         SecretKeySpec secretKeySpec;
@@ -66,7 +93,12 @@ public class Generator {
         return StringUtils.leftPad(String.valueOf(token), this.getConf().getDigits(), "0");
     }
 
-
+    /**
+     * Converts an array of bytes into hex representation
+     *
+     * @param bytes the byte array
+     * @return the hex representation String
+     */
     private static String bytesToHex(byte[] bytes) {
         char[] hexArray = "0123456789ABCDEF".toCharArray();
         char[] hexChars = new char[bytes.length * 2];
@@ -93,22 +125,5 @@ public class Generator {
         return out;
     }
 
-    public void run() {
-        String curToken = "", newToken;
-
-        while (true) {
-            try {
-                newToken = this.generateOne();
-                if (!curToken.equals(newToken)) {
-                    curToken = newToken;
-                    System.out.println("New token: " + curToken);
-                }
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                System.err.println();
-            }
-        }
-
-    }
 }
 

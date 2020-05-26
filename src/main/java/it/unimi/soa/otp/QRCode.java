@@ -15,10 +15,10 @@ import static com.google.zxing.BarcodeFormat.QR_CODE;
 
 public class QRCode {
 
-    private TOTPConf totpConf;
+    private String totpConf;
     private int size; //Pixels of main.java.totp.QRCode
 
-    public QRCode(TOTPConf totpConf, int size) {
+    public QRCode(String totpConf, int size) {
         this.totpConf = totpConf;
         this.size = size;
     }
@@ -27,7 +27,7 @@ public class QRCode {
         BitMatrix bitMatrix = null;
         try {
             QRCodeWriter qrCodeWriter = new QRCodeWriter();
-            bitMatrix = qrCodeWriter.encode(totpConf.toString(), QR_CODE, this.getSize(), this.getSize());
+            bitMatrix = qrCodeWriter.encode(totpConf, QR_CODE, this.getSize(), this.getSize());
         } catch (Exception e) {
             System.err.println("Error creating qrcode");
         }
@@ -63,7 +63,7 @@ public class QRCode {
         return size;
     }
 
-    public TOTPConf getTotpConf() {
+    public String getTotpConf() {
         return totpConf;
     }
 }

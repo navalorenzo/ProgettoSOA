@@ -1,5 +1,10 @@
 package it.unimi.soa.otp;
 
+import org.apache.commons.codec.digest.DigestUtils;
+
+import java.security.SecureRandom;
+import java.util.ArrayList;
+
 public class TOTPConf {
     private String secret; //Secret key [REQUIRED]
     private String label; // Label [REQUIRED]
@@ -7,6 +12,7 @@ public class TOTPConf {
     private String algorihtm; //SHA1, SHA256, SHA512  [OPTIONAL]
     private int digits; //6 or 8 [OPTIONAL]
     private int period; //Seconds for a valid token [OPTIONAL]
+    private final int BACKUP_CODES = 10;
 
     public TOTPConf(String secret, String label) {
         this.secret = secret;
@@ -68,5 +74,18 @@ public class TOTPConf {
 
     public String getLabel() {
         return label;
+    }
+
+    public ArrayList<String> genBackupCodes() {
+        ArrayList<String> tokens = new ArrayList<>();
+        String token;
+        SecureRandom secureRandom = new SecureRandom();
+        secureRandom.setSeed(this.getSecret().getBytes());
+        for (int i = 0; i < BACKUP_CODES; i++) {
+            //String randomcode = String.valueOf(secureRandom.nextInt())
+            String randomcode = "prova" + i;
+            tokens.add(DigestUtils.sha1Hex(randomcode));
+        }
+        return tokens;
     }
 }
