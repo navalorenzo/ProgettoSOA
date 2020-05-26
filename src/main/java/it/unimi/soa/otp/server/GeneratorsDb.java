@@ -1,4 +1,4 @@
-package it.unimi.soa.otp;
+package it.unimi.soa.otp.server;
 
 import java.util.concurrent.ConcurrentHashMap;
 
