@@ -5,8 +5,8 @@ import com.google.gson.Gson;
 import it.unimi.soa.message.auth.MessageAuthRequest;
 import it.unimi.soa.message.auth.MessageAuthToken;
 import it.unimi.soa.message.ticket.EncryptedTicket;
-import it.unimi.soa.message.ticket.MessageTicketRequest;
 import it.unimi.soa.message.ticket.MessageServiceTicket;
+import it.unimi.soa.message.ticket.MessageTicketRequest;
 import it.unimi.soa.message.ticket.UserTicket;
 import it.unimi.soa.service.Service;
 import it.unimi.soa.utilities.CipherModule;
@@ -21,7 +21,7 @@ import java.util.Scanner;
 
 public class KerberosClient {
     public static void main(String[] args) {
-        // ask for authentication
+        // Ask for authentication
         Scanner reader = new Scanner(System.in);
         System.out.print("Username: ");
         String username = reader.nextLine();
@@ -30,20 +30,19 @@ public class KerberosClient {
         System.out.print("Service: ");
         String service = reader.nextLine();
 
-        // init client
+        // Init client
         Client client = ClientBuilder.newClient();
         WebTarget target = client.target("http://localhost:8090");
 
-        // request auth
+        // Request auth
         MessageAuthToken messageAuthToken = requestAuth(target, new MessageAuthRequest(username));
-        // extract the ticket
-        EncryptedTicket encryptedTicket = new Gson().fromJson(messageAuthToken.authTicket, EncryptedTicket.class);
+        // Extract the ticket
+        EncryptedTicket encryptedTicket = new Gson().fromJson(messageAuthToken.getAuthTicket(), EncryptedTicket.class);
 
-        // decrypt ticket in order to send it to the ticket-granting server
+        // Decrypt ticket in order to send it to the ticket-granting server
         UserTicket userTicket = null;
         try {
             byte[] grantingServerTicket = CipherModule.decrypt(password.toCharArray(), encryptedTicket.encryptedTicket);
-            System.out.println(new String(grantingServerTicket));
 
             userTicket = new Gson().fromJson(new String(grantingServerTicket), UserTicket.class);
         } catch (Exception e) {
@@ -52,7 +51,7 @@ public class KerberosClient {
         }
 
         // prepare the token for the ticket-granting server
-        if(userTicket != null) {
+        if (userTicket != null) {
             MessageServiceTicket messageServiceTicket = requestTicket(target, new MessageTicketRequest(username, userTicket.authenticator, Service.valueOf(service), userTicket.encryptedTicket));
 
             // TODO: supporto per più server
@@ -67,7 +66,7 @@ public class KerberosClient {
         String argument = new Gson().toJson(messageAuthRequest);
 
         Response response = target.request().post(Entity.entity(argument, MediaType.APPLICATION_JSON));
-        if(response.getStatus() != 200) {
+        if (response.getStatus() != 200) {
             System.err.println("The request failed: " + response.getStatus());
             System.exit(1);
         }
@@ -80,7 +79,7 @@ public class KerberosClient {
         String argument = new Gson().toJson(messageTicketRequest);
 
         Response response = target.request().post(Entity.entity(argument, MediaType.APPLICATION_JSON));
-        if(response.getStatus() != 200) {
+        if (response.getStatus() != 200) {
             System.err.println("The request failed: " + response.getStatus());
             System.exit(1);
         }
@@ -93,7 +92,7 @@ public class KerberosClient {
         String argument = new Gson().toJson(messageServiceTicket);
 
         Response response = target.request().post(Entity.entity(argument, MediaType.APPLICATION_JSON));
-        if(response.getStatus() != 200) {
+        if (response.getStatus() != 200) {
             System.err.println("The request failed: " + response.getStatus());
             System.exit(1);
         }

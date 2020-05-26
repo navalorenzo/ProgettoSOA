@@ -1,15 +1,36 @@
 package it.unimi.soa.utilities;
 
-public class SharedPassword {
-    private static final String ASTGS = "passwordDiASeTGS";
-    private static final String TGSSS = "passwordDiTGSeSS";
+import java.util.concurrent.ConcurrentHashMap;
 
-    public static String getASTGSKey() {
-        return ASTGS;
+public class SharedPassword {
+    private static SharedPassword sharedPassword;
+    private String astgskey;
+    private ConcurrentHashMap<String, String> serviceskeys;
+
+    private SharedPassword() {
+        this.serviceskeys = new ConcurrentHashMap<>();
     }
 
-    // TODO: magari mettiamo una mappa
-    public static String getTGSSSKey() {
-        return TGSSS;
+    public static synchronized SharedPassword getInstance() {
+        if (sharedPassword == null)
+            sharedPassword = new SharedPassword();
+        return sharedPassword;
+    }
+
+
+    public String getTGSSSKey(String service) {
+        return serviceskeys.get(service);
+    }
+
+    public String getASTGSKey() {
+        return astgskey;
+    }
+
+    public void registerAstgskey(String astgskey) {
+        this.astgskey = astgskey;
+    }
+
+    public void registerService(String service, String key) {
+        serviceskeys.put(service, key);
     }
 }

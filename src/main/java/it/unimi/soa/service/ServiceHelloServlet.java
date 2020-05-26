@@ -1,12 +1,7 @@
 package it.unimi.soa.service;
 
 import com.google.gson.Gson;
-import it.unimi.soa.authentication.UserDB;
-import it.unimi.soa.message.auth.MessageAuthRequest;
-import it.unimi.soa.message.auth.MessageAuthToken;
 import it.unimi.soa.message.service.GrantingServiceTicket;
-import it.unimi.soa.message.ticket.EncryptedTicket;
-import it.unimi.soa.message.ticket.GrantingServerTicket;
 import it.unimi.soa.message.ticket.MessageServiceTicket;
 import it.unimi.soa.utilities.CipherModule;
 import it.unimi.soa.utilities.SharedPassword;
@@ -27,7 +22,7 @@ public class ServiceHelloServlet extends HttpServlet {
         String username = messageServiceTicket.username;
         byte[] serviceTicket = messageServiceTicket.serviceTicket;
 
-        String serviceServerPassword = SharedPassword.getTGSSSKey();
+        String serviceServerPassword = SharedPassword.getInstance().getTGSSSKey(service.toString());
 
         try {
             // decrypt message and validate
@@ -35,7 +30,7 @@ public class ServiceHelloServlet extends HttpServlet {
             GrantingServiceTicket grantingServiceTicket = new Gson().fromJson(new String(decryptedTicket), GrantingServiceTicket.class);
 
             // validate ticket
-            if(validateTicket(grantingServiceTicket, ipAddr, username)) {
+            if (validateTicket(grantingServiceTicket, ipAddr, username)) {
                 response.setContentType("application/json");
                 response.setStatus(HttpServletResponse.SC_OK);
                 response.getWriter().println(String.format("{ \"status\": \"ok %s, you are logged in %s service\"}", username, service));
@@ -53,7 +48,7 @@ public class ServiceHelloServlet extends HttpServlet {
     }
 
     private boolean validateTicket(GrantingServiceTicket grantingServiceTicket, String ipAddr, String username) {
-        if(grantingServiceTicket.ipAddr.equals(ipAddr) && grantingServiceTicket.username.equals(username) && grantingServiceTicket.service.equals(Service.HELLO)) {
+        if (grantingServiceTicket.ipAddr.equals(ipAddr) && grantingServiceTicket.username.equals(username) && grantingServiceTicket.service.equals(Service.HELLO)) {
             return grantingServiceTicket.timestamp + grantingServiceTicket.lifetime > System.currentTimeMillis();
         }
         return false;

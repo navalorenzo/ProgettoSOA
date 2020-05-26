@@ -11,17 +11,19 @@ public class UserDB {
     }
 
     public static UserDB getInstance() {
-        if(instance == null) {
+        if (instance == null) {
             synchronized (UserDB.class) {
-                if(instance == null) instance = new UserDB();
+                if (instance == null) instance = new UserDB();
             }
         }
         return instance;
     }
 
     public String getPassword(String username) {
-        // TODO: STUB, PLS FIX
-        return "password";
-        //return userDB.get(username);
+        return userDB.get(username);
+    }
+
+    public void register(String userid, String key) {
+        userDB.put(userid, key);
     }
 }

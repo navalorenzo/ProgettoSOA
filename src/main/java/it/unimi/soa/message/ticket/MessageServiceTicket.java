@@ -17,18 +17,21 @@ public class MessageServiceTicket {
     public String username;
     public byte[] serviceTicket;
 
-    public MessageServiceTicket() {}
+    public MessageServiceTicket() {
+    }
 
     public MessageServiceTicket createJSONTicket(String username, String ipAddr, Service service) throws NoSuchPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException, InvalidKeySpecException {
         final int LIFETIME = 60 * 60000;
 
-        // create ticket for the ticket-granting server
+        // Create ticket for the ticket-granting server
         long timestamp = System.currentTimeMillis();
         GrantingServiceTicket grantingServiceTicket = new GrantingServiceTicket(username, ipAddr, service, timestamp, LIFETIME);
 
-        // encrypt the ticket for the service server
+        // Encrypt the ticket for the service server
         this.username = username;
-        this.serviceTicket = CipherModule.encrypt(SharedPassword.getTGSSSKey().toCharArray(), new Gson().toJson(grantingServiceTicket).getBytes());
+        String password = SharedPassword.getInstance().getTGSSSKey(service.toString());
+        String serviceTicket = new Gson().toJson(grantingServiceTicket);
+        this.serviceTicket = CipherModule.encrypt(password.toCharArray(), serviceTicket.getBytes());
         return this;
     }
 }

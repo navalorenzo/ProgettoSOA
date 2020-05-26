@@ -15,20 +15,23 @@ public class AuthenticationServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         MessageAuthRequest messageAuthRequest = new Gson().fromJson(request.getReader().readLine(), MessageAuthRequest.class);
 
-        // get client info
+        // Get client info
         String ipAddr = request.getRemoteAddr() + request.getRemotePort();
         String userPassword = UserDB.getInstance().getPassword(messageAuthRequest.username);
 
-        String ticketGrantingPassword = SharedPassword.getASTGSKey();
-
-        // create response packet
         try {
+            if (userPassword == null)
+                throw new NullPointerException();
+
+            String ticketGrantingPassword = SharedPassword.getInstance().getASTGSKey();
+
+            // Create response packet
             MessageAuthToken messageAuthToken = new MessageAuthToken().createJSONToken(messageAuthRequest.username, ipAddr, ticketGrantingPassword, userPassword);
             response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_OK);
             response.getWriter().println(new Gson().toJson(messageAuthToken));
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("No user found");
             response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().println("{ \"status\": \"fail\"}");

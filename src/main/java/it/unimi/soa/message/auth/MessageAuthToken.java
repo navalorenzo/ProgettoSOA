@@ -1,12 +1,14 @@
 package it.unimi.soa.message.auth;
 
 import com.google.gson.Gson;
-import it.unimi.soa.message.ticket.GrantingServerTicket;
 import it.unimi.soa.message.ticket.EncryptedTicket;
+import it.unimi.soa.message.ticket.GrantingServerTicket;
 import it.unimi.soa.message.ticket.UserTicket;
 import it.unimi.soa.utilities.CipherModule;
 
-import javax.crypto.*;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -15,7 +17,8 @@ import java.security.spec.InvalidKeySpecException;
 public class MessageAuthToken {
     public String authTicket;
 
-    public MessageAuthToken() {}
+    public MessageAuthToken() {
+    }
 
     public MessageAuthToken(String authTicket) {
         this.authTicket = authTicket;
@@ -47,5 +50,9 @@ public class MessageAuthToken {
         // create message for the ticket-granting server
         authTicket = new Gson().toJson(new EncryptedTicket(clientTicket));
         return this;
+    }
+
+    public String getAuthTicket() {
+        return authTicket;
     }
 }
