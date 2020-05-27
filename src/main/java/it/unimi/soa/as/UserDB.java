@@ -1,4 +1,4 @@
-package it.unimi.soa.authentication;
+package it.unimi.soa.as;
 
 import java.util.concurrent.ConcurrentHashMap;
 

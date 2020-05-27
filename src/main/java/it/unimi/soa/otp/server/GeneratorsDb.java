@@ -1,10 +1,11 @@
 package it.unimi.soa.otp.server;
 
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class GeneratorsDb {
 
-    private static GeneratorsDb generatorsDb;
+    private static volatile GeneratorsDb generatorsDb;
     private ConcurrentHashMap<String, Generator> db;
 
     private GeneratorsDb() {
@@ -13,7 +14,12 @@ public class GeneratorsDb {
 
     public static GeneratorsDb getInstance() {
         if (generatorsDb == null)
-            generatorsDb = new GeneratorsDb();
+            synchronized (GeneratorsDb.class) {
+                if (generatorsDb == null) {
+                    generatorsDb = new GeneratorsDb();
+                }
+            }
+
         return generatorsDb;
     }
 
@@ -38,6 +44,10 @@ public class GeneratorsDb {
         }
 
         return db.get(userid).getConf().toString();
+    }
+
+    public ArrayList<String> generateTokenForUser(String userid) {
+        return db.get(userid).generate();
     }
 
 }

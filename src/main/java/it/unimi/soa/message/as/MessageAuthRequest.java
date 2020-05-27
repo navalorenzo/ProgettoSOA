@@ -1,4 +1,4 @@
-package it.unimi.soa.message.auth;
+package it.unimi.soa.message.as;
 
 public class MessageAuthRequest {
     public String username;

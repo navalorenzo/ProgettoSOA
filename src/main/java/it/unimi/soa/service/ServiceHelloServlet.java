@@ -1,8 +1,10 @@
 package it.unimi.soa.service;
 
 import com.google.gson.Gson;
-import it.unimi.soa.message.service.GrantingServiceTicket;
-import it.unimi.soa.message.ticket.MessageServiceTicket;
+import it.unimi.soa.message.service.MessageServiceRequest;
+import it.unimi.soa.message.service.MessageServiceResponse;
+import it.unimi.soa.ticket.AuthenticatorServerTicket;
+import it.unimi.soa.ticket.ServiceTicket;
 import it.unimi.soa.utilities.CipherModule;
 import it.unimi.soa.utilities.SharedPassword;
 
@@ -15,25 +17,28 @@ public class ServiceHelloServlet extends HttpServlet {
     private final Service service = Service.HELLO;
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        MessageServiceTicket messageServiceTicket = new Gson().fromJson(request.getReader().readLine(), MessageServiceTicket.class);
+        MessageServiceRequest messageServiceRequest = new Gson().fromJson(request.getReader().readLine(), MessageServiceRequest.class);
 
         // get client info
         String ipAddr = request.getRemoteAddr() + request.getRemotePort();
-        String username = messageServiceTicket.username;
-        byte[] serviceTicket = messageServiceTicket.serviceTicket;
+        byte[] serviceEncryptedTicket = messageServiceRequest.getServiceEncryptedTicket();
+        byte[] clientServerEncryptedSessionKey = messageServiceRequest.getClientServerEncryptedSessionKey();
 
         String serviceServerPassword = SharedPassword.getInstance().getTGSSSKey(service.toString());
 
         try {
-            // decrypt message and validate
-            byte[] decryptedTicket = CipherModule.decrypt(serviceServerPassword.toCharArray(), messageServiceTicket.serviceTicket);
-            GrantingServiceTicket grantingServiceTicket = new Gson().fromJson(new String(decryptedTicket), GrantingServiceTicket.class);
+            // decrypt the service ticket
+            ServiceTicket serviceTicket = new Gson().fromJson(new String(CipherModule.decrypt(serviceServerPassword.toCharArray(), serviceEncryptedTicket)), ServiceTicket.class);
+
+            // decrypt the user authenticator ticket using the password contained in the service ticket
+            AuthenticatorServerTicket authenticatorServerTicket = new Gson().fromJson(new String(CipherModule.decrypt(serviceTicket.getClientServerSessionKey().toCharArray(), clientServerEncryptedSessionKey)), AuthenticatorServerTicket.class);
 
             // validate ticket
-            if (validateTicket(grantingServiceTicket, ipAddr, username)) {
+            if (validateTicket(serviceTicket, authenticatorServerTicket, ipAddr)) {
+                MessageServiceResponse messageServiceResponse = new MessageServiceResponse().createJSONToken(authenticatorServerTicket.getTimestamp(), serviceTicket.getClientServerSessionKey());
                 response.setContentType("application/json");
                 response.setStatus(HttpServletResponse.SC_OK);
-                response.getWriter().println(String.format("{ \"status\": \"ok %s, you are logged in %s service\"}", username, service));
+                response.getWriter().println(new Gson().toJson(messageServiceResponse));
             } else {
                 response.setContentType("application/json");
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -47,9 +52,9 @@ public class ServiceHelloServlet extends HttpServlet {
         }
     }
 
-    private boolean validateTicket(GrantingServiceTicket grantingServiceTicket, String ipAddr, String username) {
-        if (grantingServiceTicket.ipAddr.equals(ipAddr) && grantingServiceTicket.username.equals(username) && grantingServiceTicket.service.equals(Service.HELLO)) {
-            return grantingServiceTicket.timestamp + grantingServiceTicket.lifetime > System.currentTimeMillis();
+    private boolean validateTicket(ServiceTicket serviceTicket, AuthenticatorServerTicket authenticatorServerTicket, String ipAddr) {
+        if (serviceTicket.getIpAddr().equals(ipAddr) && serviceTicket.getUsername().equals(authenticatorServerTicket.getUsername()) && serviceTicket.getService().equals(Service.HELLO.toString())) {
+            return serviceTicket.getTimestamp() + serviceTicket.getLifetime() > System.currentTimeMillis();
         }
         return false;
     }

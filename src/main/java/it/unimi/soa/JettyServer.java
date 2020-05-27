@@ -1,10 +1,12 @@
 package it.unimi.soa;
 
-import it.unimi.soa.authentication.AuthenticationServlet;
-import it.unimi.soa.authentication.UserDB;
+import it.unimi.soa.as.AuthenticationServlet;
+import it.unimi.soa.as.UserDB;
+import it.unimi.soa.otp.client.QRCode;
+import it.unimi.soa.otp.server.GeneratorsDb;
 import it.unimi.soa.service.Service;
 import it.unimi.soa.service.ServiceHelloServlet;
-import it.unimi.soa.ticket.TicketGrantingServlet;
+import it.unimi.soa.tgs.TicketGrantingServlet;
 import it.unimi.soa.utilities.SharedPassword;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
@@ -32,6 +34,9 @@ public class JettyServer {
 
         // TODO register users
         UserDB.getInstance().register("user", "key");
+        String conf = GeneratorsDb.getInstance().register("user");
+        QRCode qrcode = new QRCode(conf, 300);
+        qrcode.show();
 
         server.start();
 

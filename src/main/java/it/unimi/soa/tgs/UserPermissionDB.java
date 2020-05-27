@@ -1,4 +1,4 @@
-package it.unimi.soa.ticket;
+package it.unimi.soa.tgs;
 
 import it.unimi.soa.service.Service;
 
