@@ -11,6 +11,9 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
+/**
+ * TODO
+ */
 public class MessageServiceRequest {
     public byte[] serviceEncryptedTicket;
     public byte[] clientServerEncryptedSessionKey;
@@ -18,15 +21,22 @@ public class MessageServiceRequest {
     public MessageServiceRequest() {
     }
 
-    public MessageServiceRequest createJSONToken(String username, String clientServerSessionKey, byte[] serviceEncryptedTicket) throws NoSuchPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException, InvalidKeySpecException {
+    public MessageServiceRequest createJSONToken(String username, String clientServerSessionKey, byte[] serviceEncryptedTicket)
+            throws NoSuchPaddingException,
+            NoSuchAlgorithmException,
+            IllegalBlockSizeException,
+            BadPaddingException,
+            InvalidKeyException,
+            InvalidKeySpecException {
+
         // Attach the service encrypted ticket
         this.serviceEncryptedTicket = serviceEncryptedTicket;
 
-        // create authenticator for the ticket-granting server
+        // Create authenticator for the ticket-granting server
         long timestamp = System.currentTimeMillis();
-        AuthenticatorServerTicket authenticatorServerTicket = new AuthenticatorServerTicket(username,timestamp);
+        AuthenticatorServerTicket authenticatorServerTicket = new AuthenticatorServerTicket(username, timestamp);
 
-        // encrypt for the ticket-granting server
+        // Encrypt for the ticket-granting server
         clientServerEncryptedSessionKey = CipherModule.encrypt(clientServerSessionKey.toCharArray(), new Gson().toJson(authenticatorServerTicket).getBytes());
 
         return this;

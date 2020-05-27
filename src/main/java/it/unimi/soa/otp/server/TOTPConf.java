@@ -5,6 +5,11 @@ import org.apache.commons.codec.digest.DigestUtils;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 
+
+/**
+ * A standard configuration of TOTP.
+ * Generate the string configuration for the QRCode (client side) and is usedd by Generator (server side).
+ */
 public class TOTPConf {
     private String secret; //Secret key [REQUIRED]
     private String label; // Label [REQUIRED]
@@ -23,7 +28,11 @@ public class TOTPConf {
         this.period = 30;
     }
 
-
+    /**
+     * Should be sent to the client and used in an authenticator app.
+     *
+     * @return
+     */
     @Override
     public String toString() {
         String code = "otpauth://totp/" + this.getLabel() +
@@ -78,12 +87,10 @@ public class TOTPConf {
 
     public ArrayList<String> genBackupCodes() {
         ArrayList<String> tokens = new ArrayList<>();
-        String token;
         SecureRandom secureRandom = new SecureRandom();
         secureRandom.setSeed(this.getSecret().getBytes());
         for (int i = 0; i < BACKUP_CODES; i++) {
-            //String randomcode = String.valueOf(secureRandom.nextInt())
-            String randomcode = "prova" + i;
+            String randomcode = String.valueOf(secureRandom.nextInt());
             tokens.add(DigestUtils.sha1Hex(randomcode));
         }
         return tokens;

@@ -2,6 +2,9 @@ package it.unimi.soa.utilities;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * TODO
+ */
 public class SharedPassword {
     private static SharedPassword sharedPassword;
     private String astgskey;

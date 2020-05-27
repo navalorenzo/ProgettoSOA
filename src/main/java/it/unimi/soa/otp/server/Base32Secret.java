@@ -4,6 +4,9 @@ import org.apache.commons.codec.binary.Base32;
 
 import java.util.Random;
 
+/**
+ * Generate a random base32 encrypted key. Used to create a TOTP configuration.
+ */
 public class Base32Secret {
     private static final int size = 20;
 

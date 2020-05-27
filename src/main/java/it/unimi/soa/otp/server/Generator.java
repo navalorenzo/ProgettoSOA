@@ -10,6 +10,9 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Date;
 
+/**
+ * This class generates the TOTP using the input configuration with a pre-built base32 enncoded key.
+ */
 public class Generator {
     private TOTPConf conf;
 

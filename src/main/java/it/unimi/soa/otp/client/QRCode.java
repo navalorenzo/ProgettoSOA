@@ -12,11 +12,13 @@ import java.io.File;
 
 import static com.google.zxing.BarcodeFormat.QR_CODE;
 
-
+/**
+ * This is the wrapper for QRCode generation. Used by the client
+ */
 public class QRCode {
 
     private String totpConf;
-    private int size; //Pixels of main.java.totp.QRCode
+    private int size;
 
     public QRCode(String totpConf, int size) {
         this.totpConf = totpConf;
@@ -63,7 +65,7 @@ public class QRCode {
         return size;
     }
 
-    public String getTotpConf() {
+    public String getConf() {
         return totpConf;
     }
 }

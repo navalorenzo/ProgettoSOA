@@ -2,6 +2,9 @@ package it.unimi.soa.as;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * TODO
+ */
 public class UserDB {
     private static UserDB instance;
     private ConcurrentHashMap<String, String> userDB;

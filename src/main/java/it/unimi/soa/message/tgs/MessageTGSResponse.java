@@ -13,13 +13,23 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 
+/**
+ * TODO
+ */
 public class MessageTGSResponse {
     public byte[] serviceEncryptedTicket;
     public byte[] clientServerEncryptedSessionKey;
 
-    public MessageTGSResponse() {}
+    public MessageTGSResponse() {
+    }
 
-    public MessageTGSResponse createJSONTicket(String username, String ipAddr, String service, String clientTgsSessionKey) throws NoSuchPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException, InvalidKeySpecException {
+    public MessageTGSResponse createJSONTicket(String username, String ipAddr, String service, String clientTgsSessionKey)
+            throws NoSuchPaddingException,
+            NoSuchAlgorithmException,
+            IllegalBlockSizeException,
+            BadPaddingException,
+            InvalidKeyException,
+            InvalidKeySpecException {
         final int LIFETIME = 30 * 60000;
 
         // create ticket for the service server

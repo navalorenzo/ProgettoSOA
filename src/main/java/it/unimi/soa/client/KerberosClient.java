@@ -1,32 +1,29 @@
 package it.unimi.soa.client;
 
-
 import com.google.gson.Gson;
 import it.unimi.soa.message.as.MessageAuthRequest;
 import it.unimi.soa.message.as.MessageAuthResponse;
 import it.unimi.soa.message.service.MessageServiceRequest;
 import it.unimi.soa.message.service.MessageServiceResponse;
-import it.unimi.soa.message.tgs.MessageTGSResponse;
 import it.unimi.soa.message.tgs.MessageTGSRequest;
+import it.unimi.soa.message.tgs.MessageTGSResponse;
 import it.unimi.soa.ticket.AuthenticatorServerTicket;
 import it.unimi.soa.utilities.CipherModule;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
-import java.util.Arrays;
 import java.util.Scanner;
 
+/**
+ * TODO
+ */
 public class KerberosClient {
+    public static final String TARGET = "http://localhost:8090";
+
     public static void main(String[] args) {
         // Ask for authentication
         Scanner reader = new Scanner(System.in);
@@ -41,7 +38,7 @@ public class KerberosClient {
 
         // Init client
         Client client = ClientBuilder.newClient();
-        WebTarget target = client.target("http://localhost:8090");
+        WebTarget target = client.target(TARGET);
 
         // Request auth
         MessageAuthResponse messageAuthResponse = requestAuth(target, new MessageAuthRequest(username));
@@ -60,7 +57,7 @@ public class KerberosClient {
             System.exit(1);
         }
 
-        // send server-ticket request to the ticket-granting server
+        // Send server-ticket request to the ticket-granting server
 
         MessageTGSRequest messageTGSRequest = null;
         try {
@@ -73,14 +70,15 @@ public class KerberosClient {
 
         MessageTGSResponse messageTGSResponse = requestTicket(target, messageTGSRequest);
 
-        // send the service request
+        // Send the service request
         byte[] serviceEncryptedTicket = messageTGSResponse.getServiceEncryptedTicket();
         byte[] clientServerEncryptedSessionKey = messageTGSResponse.getClientServerEncryptedSessionKey();
 
         // Decrypt the client-tgs session key in order to encrypt the communication with the tgs
         byte[] clientServerSessionKey = new byte[0];
         try {
-            clientServerSessionKey = CipherModule.decrypt(new String(clientTgsSessionKey).toCharArray(), clientServerEncryptedSessionKey);
+            clientServerSessionKey = CipherModule.decrypt(
+                    new String(clientTgsSessionKey).toCharArray(), clientServerEncryptedSessionKey);
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println("Could not decrypt the ticket!");
@@ -99,14 +97,17 @@ public class KerberosClient {
 
         MessageServiceResponse messageServiceResponse = requestService(target, messageServiceRequest);
 
-        // check service response
+        // Check service response
         String receivedTimestamp = null;
         String previousTimestamp = null;
         try {
-            receivedTimestamp = new String(CipherModule.decrypt(new String(clientServerSessionKey).toCharArray(), messageServiceResponse.getTimestampEncryptedChallenge()));
-            previousTimestamp = String.valueOf(new Gson().fromJson(new String(CipherModule.decrypt(new String(clientServerSessionKey).toCharArray(), messageServiceRequest.getClientServerEncryptedSessionKey())), AuthenticatorServerTicket.class).getTimestamp());
+            receivedTimestamp = new String(CipherModule.decrypt(
+                    new String(clientServerSessionKey).toCharArray(), messageServiceResponse.getTimestampEncryptedChallenge()));
+            previousTimestamp = String.valueOf(
+                    new Gson().fromJson(
+                            new String(CipherModule.decrypt(
+                                    new String(clientServerSessionKey).toCharArray(), messageServiceRequest.getClientServerEncryptedSessionKey())), AuthenticatorServerTicket.class).getTimestamp());
         } catch (Exception e) {
-            e.printStackTrace();
             System.err.println("Could not decrypt the ticket!");
             System.exit(1);
         }
@@ -114,9 +115,7 @@ public class KerberosClient {
         System.out.println("Authenticated: " + receivedTimestamp.equals(previousTimestamp));
 
         // TODO: supporto per più server
-        // send the request to the service server
-        //System.out.println(requestService(target, ));
-
+        // Send the request to the service server
     }
 
     private static MessageAuthResponse requestAuth(WebTarget target, MessageAuthRequest messageAuthRequest) {

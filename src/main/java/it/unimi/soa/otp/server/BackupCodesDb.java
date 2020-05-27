@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Keeps all the backup codes in a map with userid and token
+ * Keeps all the backup codes in a map with userid and token. This is stored in the server.
  */
 public class BackupCodesDb {
 

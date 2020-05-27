@@ -1,5 +1,8 @@
 package it.unimi.soa.message.as;
 
+/**
+ * TODO
+ */
 public class MessageAuthRequest {
     public String username;
 

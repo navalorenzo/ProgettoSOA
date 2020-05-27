@@ -9,12 +9,22 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
+/**
+ * TODO
+ */
 public class MessageServiceResponse {
     public byte[] timestampEncryptedChallenge;
 
-    public MessageServiceResponse() {}
+    public MessageServiceResponse() {
+    }
 
-    public MessageServiceResponse createJSONToken(long timestamp, String clientServerSessionKey) throws NoSuchPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException, InvalidKeySpecException {
+    public MessageServiceResponse createJSONToken(long timestamp, String clientServerSessionKey)
+            throws NoSuchPaddingException,
+            NoSuchAlgorithmException,
+            IllegalBlockSizeException,
+            BadPaddingException,
+            InvalidKeyException,
+            InvalidKeySpecException {
         timestampEncryptedChallenge = CipherModule.encrypt(clientServerSessionKey.toCharArray(), String.valueOf(timestamp).getBytes());
 
         return this;

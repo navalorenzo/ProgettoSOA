@@ -3,6 +3,9 @@ package it.unimi.soa.otp.server;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * This database keeps track the TOTP generators for each userid
+ */
 public class GeneratorsDb {
 
     private static volatile GeneratorsDb generatorsDb;

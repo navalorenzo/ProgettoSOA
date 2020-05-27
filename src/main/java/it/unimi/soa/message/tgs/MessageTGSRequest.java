@@ -11,20 +11,30 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
+/**
+ * TODO
+ */
 public class MessageTGSRequest {
     public byte[] tgsEncryptedTicket;
     public byte[] authenticatorEncryptedTicket;
 
-    public MessageTGSRequest() {}
+    public MessageTGSRequest() {
+    }
 
-    public MessageTGSRequest createJSONToken(String username, String otp, String service, String clientTgsSessionKey, byte[] tgsEncryptedTicket) throws NoSuchPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException, InvalidKeySpecException {
+    public MessageTGSRequest createJSONToken(String username, String otp, String service, String clientTgsSessionKey, byte[] tgsEncryptedTicket)
+            throws NoSuchPaddingException,
+            NoSuchAlgorithmException,
+            IllegalBlockSizeException,
+            BadPaddingException,
+            InvalidKeyException,
+            InvalidKeySpecException {
         // Attach the TGS encrypted ticket
         this.tgsEncryptedTicket = tgsEncryptedTicket;
 
-        // create authenticator for the ticket-granting server
+        // Create authenticator for the ticket-granting server
         AuthenticatorTGSTicket authenticatorTGSTicket = new AuthenticatorTGSTicket(username, otp, service);
 
-        // encrypt for the ticket-granting server
+        // Encrypt for the ticket-granting server
         authenticatorEncryptedTicket = CipherModule.encrypt(clientTgsSessionKey.toCharArray(), new Gson().toJson(authenticatorTGSTicket).getBytes());
 
         return this;
