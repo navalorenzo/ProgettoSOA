@@ -43,7 +43,6 @@ public class GeneratorsDb {
             Generator newgen = new Generator(conf);
 
             db.put(userid, newgen);
-            BackupCodesDb.getInstance().addUserTokens(userid, conf.genBackupCodes());
 
             return db.get(userid).getConf().toString();
         }

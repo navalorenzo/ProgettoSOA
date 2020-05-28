@@ -13,21 +13,14 @@ import it.unimi.soa.otp.client.QRCode;
 import it.unimi.soa.ticket.AuthenticatorServerTicket;
 import it.unimi.soa.ticket.OTPTicket;
 import it.unimi.soa.utilities.CipherModule;
-import org.apache.commons.lang3.StringEscapeUtils;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.security.spec.InvalidKeySpecException;
 import java.util.Scanner;
 
 /**
@@ -52,10 +45,14 @@ public class KerberosClient {
 
             switch (mode) {
                 case "1":
+                    System.out.println("-----------------------");
                     register(target);
+                    System.out.println("-----------------------");
                     break;
                 case "2":
+                    System.out.println("-----------------------");
                     login(target);
+                    System.out.println("-----------------------");
                     break;
                 default:
                     System.out.println("Invalid choice! Please, try again");
@@ -103,8 +100,6 @@ public class KerberosClient {
             byte[] otpEncryptedKey = messageRegistrationResponse.getOtpEncryptedKey();
             OTPTicket otpTicket = new Gson().fromJson(new String(CipherModule.decrypt(String.valueOf(registrationSessionKey).toCharArray(), otpEncryptedKey)), OTPTicket.class);
 
-            System.out.println(otpTicket.getOtpKey());
-
             QRCode qrcode = new QRCode(otpTicket.getOtpKey(), 300);
             qrcode.show();
         } catch (Exception e) {
@@ -122,8 +117,6 @@ public class KerberosClient {
         String username = reader.nextLine();
         System.out.print("Password: ");
         String password = reader.nextLine();
-        System.out.print("OTP: ");
-        String otp = reader.nextLine();
         System.out.print("Service: ");
         String service = reader.nextLine();
 
@@ -143,6 +136,12 @@ public class KerberosClient {
             System.err.println("Could not decrypt the ticket!");
             return;
         }
+
+        System.out.println("Authentication: OK");
+
+        // Get the OTP code from the user
+        System.out.print("OTP: ");
+        String otp = reader.nextLine();
 
         // Send server-ticket request to the ticket-granting server
 
@@ -172,6 +171,8 @@ public class KerberosClient {
             return;
         }
 
+        System.out.println("Ticket granting: OK");
+
         // Create the message for the service server
         MessageServiceRequest messageServiceRequest = null;
         try {
@@ -199,7 +200,9 @@ public class KerberosClient {
             return;
         }
 
-        System.out.println("Authenticated: " + receivedTimestamp.equals(previousTimestamp));
+        System.out.println("Service validation: " + receivedTimestamp.equals(previousTimestamp));
+
+        System.out.println("Enjoy the service!");
 
         // TODO: supporto per più server
         // Send the request to the service server
@@ -212,6 +215,7 @@ public class KerberosClient {
         Response response = target.request().post(Entity.entity(argument, MediaType.APPLICATION_JSON));
         if (response.getStatus() != 200) {
             System.err.println("The request failed: " + response.getStatus());
+            System.out.println("Error: " + response.readEntity(String.class));
             System.exit(1);
         }
 
@@ -225,6 +229,7 @@ public class KerberosClient {
         Response response = target.request().post(Entity.entity(argument, MediaType.APPLICATION_JSON));
         if (response.getStatus() != 200) {
             System.err.println("The request failed: " + response.getStatus());
+            System.out.println("Error: " + response.readEntity(String.class));
             System.exit(1);
         }
 
@@ -238,6 +243,7 @@ public class KerberosClient {
         Response response = target.request().post(Entity.entity(argument, MediaType.APPLICATION_JSON));
         if (response.getStatus() != 200) {
             System.err.println("The request failed: " + response.getStatus());
+            System.out.println("Error: " + response.readEntity(String.class));
             System.exit(1);
         }
 
@@ -251,6 +257,7 @@ public class KerberosClient {
         Response response = target.request().post(Entity.entity(argument, MediaType.APPLICATION_JSON));
         if (response.getStatus() != 200) {
             System.err.println("The request failed: " + response.getStatus());
+            System.out.println("Error: " + response.readEntity(String.class));
             System.exit(1);
         }
         return new Gson().fromJson(response.readEntity(String.class), MessageRegistrationResponse.class);

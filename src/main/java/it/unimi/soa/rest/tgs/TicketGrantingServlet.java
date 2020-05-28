@@ -56,6 +56,7 @@ public class TicketGrantingServlet extends HttpServlet {
                 response.setContentType("application/json");
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 response.getWriter().println("{ \"status\": \"the ticket is not valid\"}");
+                System.out.println(new Gson().toJson(tgsTicket) + " - " + System.currentTimeMillis());
             }
 
         } catch (Exception e) {
@@ -66,8 +67,14 @@ public class TicketGrantingServlet extends HttpServlet {
     }
 
     private boolean validateTicket(TGSTicket tgsTicket, AuthenticatorTGSTicket authenticatorTGSTicket, String ipAddr) {
+        System.out.println(tgsTicket.getUsername().equals(authenticatorTGSTicket.getUsername()));
+        System.out.println(tgsTicket.getIpAddr().equals(ipAddr) + " " + ipAddr + " " + tgsTicket.getIpAddr());
+        System.out.println(tgsTicket.getOtp1().equals(authenticatorTGSTicket.getOtp()));
+        System.out.println(tgsTicket.getOtp2().equals(authenticatorTGSTicket.getOtp()));
+        System.out.println((tgsTicket.getOtp1().equals(authenticatorTGSTicket.getOtp()) || tgsTicket.getOtp2().equals(authenticatorTGSTicket.getOtp())));
         if (tgsTicket.getUsername().equals(authenticatorTGSTicket.getUsername()) &&
                 tgsTicket.getIpAddr().equals(ipAddr) &&
+                // TODO: usa gli arraylist e non otp1 e otp2
                 (tgsTicket.getOtp1().equals(authenticatorTGSTicket.getOtp()) || tgsTicket.getOtp2().equals(authenticatorTGSTicket.getOtp()))) {
             return tgsTicket.getTimestamp() + tgsTicket.getLifetime() > System.currentTimeMillis();
         } else {
