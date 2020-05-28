@@ -68,8 +68,8 @@ public class KerberosClient {
                 case "1":
                     continue;
                 default:
-                    validSelection = true;
                     System.out.println("Goodbye! :)");
+                    System.exit(0);
             }
         }
 
