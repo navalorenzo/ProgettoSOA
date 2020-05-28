@@ -40,7 +40,7 @@ public class KerberosClient {
             System.out.println("###############################");
             System.out.println("1) Register");
             System.out.println("2) Login");
-            System.out.print("Please, choose the option: ");
+            System.out.print("Please, choose an option: ");
             String mode = reader.nextLine();
 
             switch (mode) {
@@ -186,8 +186,8 @@ public class KerberosClient {
         MessageServiceResponse messageServiceResponse = requestService(target, messageServiceRequest);
 
         // Check service response
-        String receivedTimestamp = null;
-        String previousTimestamp = null;
+        String receivedTimestamp;
+        String previousTimestamp;
         try {
             receivedTimestamp = new String(CipherModule.decrypt(
                     new String(clientServerSessionKey).toCharArray(), messageServiceResponse.getTimestampEncryptedChallenge()));

@@ -29,7 +29,7 @@ public class MessageRegistrationRequest {
         RegistrationTicket registrationTicket = new RegistrationTicket(username, password, String.valueOf(registrationSessionKey));
 
         // encrypt the ticket using the registration server public key (the SharedPassword class mocks the PKI)
-        PublicKey registrationPublicKey = CipherModule.readAsymmetricPublicKey("/home/lorenzo/Uni/ProgettoSOA/src/Resources/public.der");
+        PublicKey registrationPublicKey = CipherModule.readAsymmetricPublicKey("src/resources/public.der");
         registrationEncryptedTicket = CipherModule.encryptUsingPublicKey(registrationPublicKey, new Gson().toJson(registrationTicket).getBytes());
 
         return this;
