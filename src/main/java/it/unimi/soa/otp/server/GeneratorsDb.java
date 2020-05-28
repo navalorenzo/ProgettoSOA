@@ -44,9 +44,11 @@ public class GeneratorsDb {
 
             db.put(userid, newgen);
             BackupCodesDb.getInstance().addUserTokens(userid, conf.genBackupCodes());
+
+            return db.get(userid).getConf().toString();
         }
 
-        return db.get(userid).getConf().toString();
+        throw new IllegalStateException();
     }
 
     public ArrayList<String> generateTokenForUser(String userid) {

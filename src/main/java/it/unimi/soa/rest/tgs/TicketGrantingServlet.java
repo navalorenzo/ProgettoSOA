@@ -1,9 +1,9 @@
-package it.unimi.soa.tgs;
+package it.unimi.soa.rest.tgs;
 
 import com.google.gson.Gson;
 import it.unimi.soa.message.tgs.MessageTGSRequest;
 import it.unimi.soa.message.tgs.MessageTGSResponse;
-import it.unimi.soa.service.Service;
+import it.unimi.soa.rest.service.Service;
 import it.unimi.soa.ticket.AuthenticatorTGSTicket;
 import it.unimi.soa.ticket.TGSTicket;
 import it.unimi.soa.utilities.CipherModule;

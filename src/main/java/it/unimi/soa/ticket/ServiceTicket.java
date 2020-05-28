@@ -1,7 +1,5 @@
 package it.unimi.soa.ticket;
 
-import it.unimi.soa.service.Service;
-
 public class ServiceTicket {
     public String username;
     public String ipAddr;

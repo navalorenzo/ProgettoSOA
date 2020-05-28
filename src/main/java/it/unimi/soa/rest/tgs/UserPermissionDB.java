@@ -1,6 +1,6 @@
-package it.unimi.soa.tgs;
+package it.unimi.soa.rest.tgs;
 
-import it.unimi.soa.service.Service;
+import it.unimi.soa.rest.service.Service;
 
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;

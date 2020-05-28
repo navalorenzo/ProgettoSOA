@@ -1,4 +1,4 @@
-package it.unimi.soa.service;
+package it.unimi.soa.rest.service;
 
 import com.google.gson.Gson;
 import it.unimi.soa.message.service.MessageServiceRequest;

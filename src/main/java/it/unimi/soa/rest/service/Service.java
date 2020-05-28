@@ -1,4 +1,4 @@
-package it.unimi.soa.service;
+package it.unimi.soa.rest.service;
 
 public enum Service {
     HELLO

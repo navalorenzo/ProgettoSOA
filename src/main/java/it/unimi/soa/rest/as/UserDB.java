@@ -1,4 +1,4 @@
-package it.unimi.soa.as;
+package it.unimi.soa.rest.as;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -27,6 +27,10 @@ public class UserDB {
     }
 
     public void register(String userid, String key) {
-        userDB.put(userid, key);
+        if(!userDB.containsKey(userid)) {
+            userDB.put(userid, key);
+        } else {
+            throw new IllegalStateException();
+        }
     }
 }

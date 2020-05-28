@@ -3,19 +3,31 @@ package it.unimi.soa.client;
 import com.google.gson.Gson;
 import it.unimi.soa.message.as.MessageAuthRequest;
 import it.unimi.soa.message.as.MessageAuthResponse;
+import it.unimi.soa.message.registration.MessageRegistrationRequest;
+import it.unimi.soa.message.registration.MessageRegistrationResponse;
 import it.unimi.soa.message.service.MessageServiceRequest;
 import it.unimi.soa.message.service.MessageServiceResponse;
 import it.unimi.soa.message.tgs.MessageTGSRequest;
 import it.unimi.soa.message.tgs.MessageTGSResponse;
+import it.unimi.soa.otp.client.QRCode;
 import it.unimi.soa.ticket.AuthenticatorServerTicket;
+import it.unimi.soa.ticket.OTPTicket;
 import it.unimi.soa.utilities.CipherModule;
+import org.apache.commons.lang3.StringEscapeUtils;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Scanner;
 
 /**
@@ -25,6 +37,85 @@ public class KerberosClient {
     public static final String TARGET = "http://localhost:8090";
 
     public static void main(String[] args) {
+        // Init client
+        Client client = ClientBuilder.newClient();
+        WebTarget target = client.target(TARGET);
+
+        boolean validSelection = false;
+        while (!validSelection) {
+            Scanner reader = new Scanner(System.in);
+            System.out.println("###############################");
+            System.out.println("1) Register");
+            System.out.println("2) Login");
+            System.out.print("Please, choose the option: ");
+            String mode = reader.nextLine();
+
+            switch (mode) {
+                case "1":
+                    register(target);
+                    break;
+                case "2":
+                    login(target);
+                    break;
+                default:
+                    System.out.println("Invalid choice! Please, try again");
+                    continue;
+            }
+
+            System.out.println("1) Continue");
+            System.out.println("Any) Exit");
+            System.out.print("Please, choose the option: ");
+            mode = reader.nextLine();
+
+            switch (mode) {
+                case "1":
+                    continue;
+                default:
+                    validSelection = true;
+                    System.out.println("Goodbye! :)");
+            }
+        }
+
+    }
+
+    public static void register(WebTarget target) {
+        // Ask for user informations
+        Scanner reader = new Scanner(System.in);
+        System.out.print("Username: ");
+        String username = reader.nextLine();
+        System.out.print("Password: ");
+        String password = reader.nextLine();
+
+        // Create the registration message
+        try {
+            // Generate the session key for the registration process
+            long timestamp = System.currentTimeMillis();
+            SecureRandom secureRandom = new SecureRandom();
+            secureRandom.setSeed(timestamp);
+            long registrationSessionKey = secureRandom.nextLong();
+
+            MessageRegistrationRequest messageRegistrationRequest = new MessageRegistrationRequest().createJSONToken(username, password, String.valueOf(registrationSessionKey));
+
+            // Request registration
+            MessageRegistrationResponse messageRegistrationResponse = requestRegistration(target, messageRegistrationRequest);
+
+            // Get OTP key and show the QR code
+            byte[] otpEncryptedKey = messageRegistrationResponse.getOtpEncryptedKey();
+            OTPTicket otpTicket = new Gson().fromJson(new String(CipherModule.decrypt(String.valueOf(registrationSessionKey).toCharArray(), otpEncryptedKey)), OTPTicket.class);
+
+            System.out.println(otpTicket.getOtpKey());
+
+            QRCode qrcode = new QRCode(otpTicket.getOtpKey(), 300);
+            qrcode.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Could not encrypt the ticket!");
+            return;
+        }
+
+    }
+
+    public static void login(WebTarget target) {
         // Ask for authentication
         Scanner reader = new Scanner(System.in);
         System.out.print("Username: ");
@@ -35,10 +126,6 @@ public class KerberosClient {
         String otp = reader.nextLine();
         System.out.print("Service: ");
         String service = reader.nextLine();
-
-        // Init client
-        Client client = ClientBuilder.newClient();
-        WebTarget target = client.target(TARGET);
 
         // Request auth
         MessageAuthResponse messageAuthResponse = requestAuth(target, new MessageAuthRequest(username));
@@ -54,7 +141,7 @@ public class KerberosClient {
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println("Could not decrypt the ticket!");
-            System.exit(1);
+            return;
         }
 
         // Send server-ticket request to the ticket-granting server
@@ -65,7 +152,7 @@ public class KerberosClient {
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println("Could not encrypt the ticket!");
-            System.exit(1);
+            return;
         }
 
         MessageTGSResponse messageTGSResponse = requestTicket(target, messageTGSRequest);
@@ -82,7 +169,7 @@ public class KerberosClient {
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println("Could not decrypt the ticket!");
-            System.exit(1);
+            return;
         }
 
         // Create the message for the service server
@@ -92,7 +179,7 @@ public class KerberosClient {
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println("Could not encrypt the ticket!");
-            System.exit(1);
+            return;
         }
 
         MessageServiceResponse messageServiceResponse = requestService(target, messageServiceRequest);
@@ -109,7 +196,7 @@ public class KerberosClient {
                                     new String(clientServerSessionKey).toCharArray(), messageServiceRequest.getClientServerEncryptedSessionKey())), AuthenticatorServerTicket.class).getTimestamp());
         } catch (Exception e) {
             System.err.println("Could not decrypt the ticket!");
-            System.exit(1);
+            return;
         }
 
         System.out.println("Authenticated: " + receivedTimestamp.equals(previousTimestamp));
@@ -155,5 +242,17 @@ public class KerberosClient {
         }
 
         return new Gson().fromJson(response.readEntity(String.class), MessageServiceResponse.class);
+    }
+
+    private static MessageRegistrationResponse requestRegistration(WebTarget target, MessageRegistrationRequest messageRegistrationRequest) {
+        target = target.path("registration");
+        String argument = new Gson().toJson(messageRegistrationRequest);
+
+        Response response = target.request().post(Entity.entity(argument, MediaType.APPLICATION_JSON));
+        if (response.getStatus() != 200) {
+            System.err.println("The request failed: " + response.getStatus());
+            System.exit(1);
+        }
+        return new Gson().fromJson(response.readEntity(String.class), MessageRegistrationResponse.class);
     }
 }
