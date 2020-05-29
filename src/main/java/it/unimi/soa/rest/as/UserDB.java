@@ -3,7 +3,7 @@ package it.unimi.soa.rest.as;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * TODO
+ * This is the DB used by the Authentication and the Registration servlet.
  */
 public class UserDB {
     private static UserDB instance;

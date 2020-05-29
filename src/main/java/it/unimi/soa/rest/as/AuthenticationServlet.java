@@ -5,15 +5,11 @@ import it.unimi.soa.message.as.MessageAuthRequest;
 import it.unimi.soa.message.as.MessageAuthResponse;
 import it.unimi.soa.utilities.SharedPassword;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-/**
- * TODO
- */
 public class AuthenticationServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {

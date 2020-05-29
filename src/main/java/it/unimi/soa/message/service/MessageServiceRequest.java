@@ -13,7 +13,7 @@ import java.security.spec.InvalidKeySpecException;
 
 /**
  * This message contains the encrypted ticket and the session key which will be used to encrypt the communications with
- * the Service server. This is the step #3
+ * the Service server. This is the step #5
  */
 public class MessageServiceRequest {
     public byte[] serviceEncryptedTicket;

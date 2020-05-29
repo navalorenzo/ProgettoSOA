@@ -1,8 +1,6 @@
 package it.unimi.soa.rest.registration;
 
 import com.google.gson.Gson;
-import it.unimi.soa.message.as.MessageAuthRequest;
-import it.unimi.soa.message.as.MessageAuthResponse;
 import it.unimi.soa.message.registration.MessageRegistrationRequest;
 import it.unimi.soa.message.registration.MessageRegistrationResponse;
 import it.unimi.soa.otp.server.GeneratorsDb;
@@ -11,18 +9,12 @@ import it.unimi.soa.ticket.RegistrationTicket;
 import it.unimi.soa.utilities.CipherModule;
 import it.unimi.soa.utilities.SharedPassword;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
-import java.security.spec.InvalidKeySpecException;
 
-/**
-     * TODO
-     */
 public class RegistrationServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {

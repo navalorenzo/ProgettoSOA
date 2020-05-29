@@ -1,5 +1,8 @@
 package it.unimi.soa.ticket;
 
+/**
+ * This ticket contains the information for the Service server. This is used to check client info.
+ */
 public class ServiceTicket {
     public String username;
     public String ipAddr;

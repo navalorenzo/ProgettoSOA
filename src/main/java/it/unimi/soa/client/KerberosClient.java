@@ -10,7 +10,6 @@ import it.unimi.soa.message.service.MessageServiceResponse;
 import it.unimi.soa.message.tgs.MessageTGSRequest;
 import it.unimi.soa.message.tgs.MessageTGSResponse;
 import it.unimi.soa.otp.client.QRCode;
-import it.unimi.soa.rest.service.Service;
 import it.unimi.soa.ticket.AuthenticatorServerTicket;
 import it.unimi.soa.ticket.OTPTicket;
 import it.unimi.soa.utilities.CipherModule;

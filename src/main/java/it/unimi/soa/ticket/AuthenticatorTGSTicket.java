@@ -1,5 +1,8 @@
 package it.unimi.soa.ticket;
 
+/**
+ * This ticket contains the client informations and it is crafted by the AS. This ticket is read only by the TGS.
+ */
 public class AuthenticatorTGSTicket {
     public String username;
     public String otp;

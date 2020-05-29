@@ -8,7 +8,8 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * TODO
+ * This is a mock object that represent the shared key db between the servers. This is NOT a safe implementation, but it
+ * mocks the PKI and the pre-shared keys exchange.
  */
 public class SharedPassword {
     private static SharedPassword sharedPassword;

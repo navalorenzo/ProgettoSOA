@@ -5,6 +5,7 @@ import it.unimi.soa.rest.service.Service;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
+// TODO: questo componente non è nè aggiornato nè usato bene, da fixare
 public class UserPermissionDB {
     private static UserPermissionDB instance;
     private ConcurrentHashMap<String, ArrayList<Service>> userPermissionDB;

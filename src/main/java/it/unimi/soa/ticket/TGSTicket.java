@@ -4,6 +4,10 @@ import it.unimi.soa.otp.server.GeneratorsDb;
 
 import java.util.ArrayList;
 
+/**
+ * This ticket is built by the AS and is encrypted using the TGS key. Only the TGS can read this ticket and use the
+ * the content to prove the client identity.
+ */
 public class TGSTicket {
     public String username;
     public String ipAddr;

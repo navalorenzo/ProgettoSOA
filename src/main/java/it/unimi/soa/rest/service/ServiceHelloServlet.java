@@ -13,9 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-/**
- * TODO
- */
 public class ServiceHelloServlet extends HttpServlet {
     private final Service service = Service.HELLO;
 
