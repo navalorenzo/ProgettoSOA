@@ -20,7 +20,7 @@ public class AuthenticationServlet extends HttpServlet {
         MessageAuthRequest messageAuthRequest = new Gson().fromJson(request.getReader().readLine(), MessageAuthRequest.class);
 
         // Get client info
-        String ipAddr = request.getRemoteAddr() + request.getRemotePort();
+        String ipAddr = request.getRemoteAddr();
         String userPassword = UserDB.getInstance().getPassword(messageAuthRequest.getUsername());
 
         try {

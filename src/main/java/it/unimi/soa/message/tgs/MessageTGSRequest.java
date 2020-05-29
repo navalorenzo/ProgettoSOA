@@ -12,7 +12,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
 /**
- * TODO
+ * This message contains the encrypted ticket for the TGS and the encrypted session key for the user to use it for the
+ * communications with the TGS. This is the step #3.
  */
 public class MessageTGSRequest {
     public byte[] tgsEncryptedTicket;

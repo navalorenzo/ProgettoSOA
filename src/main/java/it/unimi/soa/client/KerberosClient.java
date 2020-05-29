@@ -10,6 +10,7 @@ import it.unimi.soa.message.service.MessageServiceResponse;
 import it.unimi.soa.message.tgs.MessageTGSRequest;
 import it.unimi.soa.message.tgs.MessageTGSResponse;
 import it.unimi.soa.otp.client.QRCode;
+import it.unimi.soa.rest.service.Service;
 import it.unimi.soa.ticket.AuthenticatorServerTicket;
 import it.unimi.soa.ticket.OTPTicket;
 import it.unimi.soa.utilities.CipherModule;
@@ -183,7 +184,7 @@ public class KerberosClient {
             return;
         }
 
-        MessageServiceResponse messageServiceResponse = requestService(target, messageServiceRequest);
+        MessageServiceResponse messageServiceResponse = requestService(target, service, messageServiceRequest);
 
         // Check service response
         String receivedTimestamp;
@@ -202,10 +203,9 @@ public class KerberosClient {
 
         System.out.println("Service validation: " + receivedTimestamp.equals(previousTimestamp));
 
-        System.out.println("Enjoy the service!");
-
-        // TODO: supporto per più server
-        // Send the request to the service server
+        System.out.println("+++++++++++++++++++++++++");
+        System.out.println("Message: " + messageServiceResponse.getWelcomeMessage());
+        System.out.println("+++++++++++++++++++++++++");
     }
 
     private static MessageAuthResponse requestAuth(WebTarget target, MessageAuthRequest messageAuthRequest) {
@@ -236,8 +236,8 @@ public class KerberosClient {
         return new Gson().fromJson(response.readEntity(String.class), MessageTGSResponse.class);
     }
 
-    private static MessageServiceResponse requestService(WebTarget target, MessageServiceRequest messageServiceRequest) {
-        target = target.path("service/hello");
+    private static MessageServiceResponse requestService(WebTarget target, String service, MessageServiceRequest messageServiceRequest) {
+        target = target.path("service/" + service.toLowerCase());
         String argument = new Gson().toJson(messageServiceRequest);
 
         Response response = target.request().post(Entity.entity(argument, MediaType.APPLICATION_JSON));

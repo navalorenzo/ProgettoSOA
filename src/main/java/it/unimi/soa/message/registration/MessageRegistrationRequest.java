@@ -13,6 +13,10 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 
+/**
+ * This message contains the registration info encrypted using the Registration server's public key. Only this server
+ * can read the content.
+ */
 public class MessageRegistrationRequest {
     public byte[] registrationEncryptedTicket;
 

@@ -11,6 +11,9 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
+/**
+ * This message contains the otp key (conf) for the user. The user can use the session key to decrypt the otp key.
+ */
 public class MessageRegistrationResponse {
     public byte[] otpEncryptedKey;
 

@@ -13,7 +13,8 @@ import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 
 /**
- * TODO
+ * This is a wrapper for the message sent by the AS to the client. It's content is encrypted and only the user can
+ * decrypt it using it's password. This is the step #2 in the Kerberos protocol. This is the step #2.
  */
 public class MessageAuthResponse {
     public byte[] tgsEncryptedTicket;

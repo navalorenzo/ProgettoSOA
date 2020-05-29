@@ -14,7 +14,8 @@ import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 
 /**
- * TODO
+ * This message contains the encrypted ticket for the Service and the encrypted session key which the user can use for
+ * the following communications. This is the step #4.
  */
 public class MessageTGSResponse {
     public byte[] serviceEncryptedTicket;

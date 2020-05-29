@@ -13,11 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-/**
- * TODO
- */
-public class ServiceHelloServlet extends HttpServlet {
-    private final Service service = Service.HELLO;
+public class ServiceBankServlet extends HttpServlet {
+    private final Service service = Service.BANK;
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         MessageServiceRequest messageServiceRequest = new Gson().fromJson(
@@ -44,7 +41,7 @@ public class ServiceHelloServlet extends HttpServlet {
             // Validate ticket
             if (validateTicket(serviceTicket, authenticatorServerTicket, ipAddr)) {
                 MessageServiceResponse messageServiceResponse = new MessageServiceResponse().createJSONToken(
-                        authenticatorServerTicket.getTimestamp(), String.format("Hello %s!", authenticatorServerTicket.getUsername()), serviceTicket.getClientServerSessionKey());
+                        authenticatorServerTicket.getTimestamp(), "Welcome to the Bank!", serviceTicket.getClientServerSessionKey());
                 response.setContentType("application/json");
                 response.setStatus(HttpServletResponse.SC_OK);
                 response.getWriter().println(new Gson().toJson(messageServiceResponse));

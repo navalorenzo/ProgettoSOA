@@ -24,7 +24,7 @@ public class TicketGrantingServlet extends HttpServlet {
         MessageTGSRequest messageTGSRequest = new Gson().fromJson(request.getReader().readLine(), MessageTGSRequest.class);
 
         // Get client info
-        String ipAddr = request.getRemoteAddr() + request.getRemotePort();
+        String ipAddr = request.getRemoteAddr();
         byte[] tgsEncryptedTicket = messageTGSRequest.getTgsEncryptedTicket();
         byte[] authenticatorEncryptedTicket = messageTGSRequest.getAuthenticatorEncryptedTicket();
 
@@ -67,11 +67,6 @@ public class TicketGrantingServlet extends HttpServlet {
     }
 
     private boolean validateTicket(TGSTicket tgsTicket, AuthenticatorTGSTicket authenticatorTGSTicket, String ipAddr) {
-        System.out.println(tgsTicket.getUsername().equals(authenticatorTGSTicket.getUsername()));
-        System.out.println(tgsTicket.getIpAddr().equals(ipAddr) + " " + ipAddr + " " + tgsTicket.getIpAddr());
-        System.out.println(tgsTicket.getOtp1().equals(authenticatorTGSTicket.getOtp()));
-        System.out.println(tgsTicket.getOtp2().equals(authenticatorTGSTicket.getOtp()));
-        System.out.println((tgsTicket.getOtp1().equals(authenticatorTGSTicket.getOtp()) || tgsTicket.getOtp2().equals(authenticatorTGSTicket.getOtp())));
         if (tgsTicket.getUsername().equals(authenticatorTGSTicket.getUsername()) &&
                 tgsTicket.getIpAddr().equals(ipAddr) &&
                 // TODO: usa gli arraylist e non otp1 e otp2

@@ -1,7 +1,7 @@
 package it.unimi.soa.message.as;
 
 /**
- * TODO
+ * This message is just a wrapper, it contains the username. This is the step #1.
  */
 public class MessageAuthRequest {
     public String username;

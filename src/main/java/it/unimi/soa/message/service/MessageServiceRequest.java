@@ -12,7 +12,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
 /**
- * TODO
+ * This message contains the encrypted ticket and the session key which will be used to encrypt the communications with
+ * the Service server. This is the step #3
  */
 public class MessageServiceRequest {
     public byte[] serviceEncryptedTicket;

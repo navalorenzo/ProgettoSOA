@@ -10,15 +10,17 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
 /**
- * TODO
+ * This message contains the timestamp challenge. This is needed by the client to verify the server identity. This is
+ * the step #6.
  */
 public class MessageServiceResponse {
     public byte[] timestampEncryptedChallenge;
+    public String welcomeMessage;
 
     public MessageServiceResponse() {
     }
 
-    public MessageServiceResponse createJSONToken(long timestamp, String clientServerSessionKey)
+    public MessageServiceResponse createJSONToken(long timestamp, String message, String clientServerSessionKey)
             throws NoSuchPaddingException,
             NoSuchAlgorithmException,
             IllegalBlockSizeException,
@@ -26,11 +28,16 @@ public class MessageServiceResponse {
             InvalidKeyException,
             InvalidKeySpecException {
         timestampEncryptedChallenge = CipherModule.encrypt(clientServerSessionKey.toCharArray(), String.valueOf(timestamp).getBytes());
+        welcomeMessage = message;
 
         return this;
     }
 
     public byte[] getTimestampEncryptedChallenge() {
         return timestampEncryptedChallenge;
+    }
+
+    public String getWelcomeMessage() {
+        return welcomeMessage;
     }
 }

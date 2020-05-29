@@ -3,6 +3,8 @@ package it.unimi.soa;
 import it.unimi.soa.rest.as.AuthenticationServlet;
 import it.unimi.soa.rest.registration.RegistrationServlet;
 import it.unimi.soa.rest.service.Service;
+import it.unimi.soa.rest.service.ServiceBankServlet;
+import it.unimi.soa.rest.service.ServiceHelloServlet;
 import it.unimi.soa.rest.tgs.TicketGrantingServlet;
 import it.unimi.soa.utilities.SharedPassword;
 import org.eclipse.jetty.server.Connector;
@@ -25,7 +27,9 @@ public class JettyServer {
         LinkedHashMap<Class, String> servlets = new LinkedHashMap<>();
         servlets.put(RegistrationServlet.class, "/registration");
         servlets.put(AuthenticationServlet.class, "/auth");
-        servlets.put(TicketGrantingServlet.class, "/service/hello");
+        servlets.put(TicketGrantingServlet.class, "/ticket");
+        servlets.put(ServiceHelloServlet.class, "/service/hello");
+        servlets.put(ServiceBankServlet.class, "/service/bank");
 
         server = new Server();
         ServletHandler handler = new ServletHandler();
@@ -43,6 +47,7 @@ public class JettyServer {
         SharedPassword.getInstance().initRegistrationPublicAndPrivateKey(KEYS_PATH + "/private.der", KEYS_PATH + "/public.der");
         SharedPassword.getInstance().registerAstgskey("passworddelserverauth");
         SharedPassword.getInstance().registerService(Service.HELLO.toString(), "passworddihello");
+        SharedPassword.getInstance().registerService(Service.BANK.toString(), "passworddibank");
 
         server.start();
     }
