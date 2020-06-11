@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Scanner;
 
 /**
- * TODO
+ * This is the client
  */
 public class KerberosClient {
     public static final String TARGET = "http://localhost:8090";
@@ -135,6 +135,7 @@ public class KerberosClient {
             password = reader.nextLine();
         }
 
+        System.out.println("Available services: " + Arrays.toString(Service.values()));
         System.out.print("Service: ");
         String service = reader.nextLine();
 

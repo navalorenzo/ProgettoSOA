@@ -13,7 +13,7 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
 /**
- * TODO
+ * This is the module used for symmetric/asymmetric encryption and decryption
  */
 public class CipherModule {
 

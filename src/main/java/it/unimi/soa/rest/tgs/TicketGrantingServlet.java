@@ -66,7 +66,6 @@ public class TicketGrantingServlet extends HttpServlet {
     private boolean validateTicket(TGSTicket tgsTicket, AuthenticatorTGSTicket authenticatorTGSTicket, String ipAddr) {
         if (tgsTicket.getUsername().equals(authenticatorTGSTicket.getUsername()) &&
                 tgsTicket.getIpAddr().equals(ipAddr) &&
-                // TODO: usa gli arraylist e non otp1 e otp2
                 (tgsTicket.getOtp1().equals(authenticatorTGSTicket.getOtp()) || tgsTicket.getOtp2().equals(authenticatorTGSTicket.getOtp()))) {
             return tgsTicket.getTimestamp() + tgsTicket.getLifetime() > System.currentTimeMillis();
         } else {
