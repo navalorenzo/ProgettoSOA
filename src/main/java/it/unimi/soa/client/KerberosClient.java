@@ -29,6 +29,9 @@ import java.util.Scanner;
 public class KerberosClient {
     public static final String TARGET = "http://localhost:8090";
 
+    private static String username = null;
+    private static String password = null;
+
     public static void main(String[] args) {
         // Init client
         Client client = ClientBuilder.newClient();
@@ -39,7 +42,7 @@ public class KerberosClient {
             Scanner reader = new Scanner(System.in);
             System.out.println("###############################");
             System.out.println("1) Register");
-            System.out.println("2) Login");
+            System.out.println("2) Service");
             System.out.print("Please, choose an option: ");
             String mode = reader.nextLine();
 
@@ -113,10 +116,14 @@ public class KerberosClient {
     public static void login(WebTarget target) {
         // Ask for authentication
         Scanner reader = new Scanner(System.in);
-        System.out.print("Username: ");
-        String username = reader.nextLine();
-        System.out.print("Password: ");
-        String password = reader.nextLine();
+
+        if(username == null || password == null) {
+            System.out.print("Username: ");
+            username = reader.nextLine();
+            System.out.print("Password: ");
+            password = reader.nextLine();
+        }
+
         System.out.print("Service: ");
         String service = reader.nextLine();
 
