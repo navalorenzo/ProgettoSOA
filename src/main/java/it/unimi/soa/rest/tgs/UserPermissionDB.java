@@ -24,8 +24,16 @@ public class UserPermissionDB {
     }
 
     public boolean isAllowed(String username, Service service) {
-        // TODO: STUB, PLS FIX
-        return true;
-        //return userPermissionDB.get(username).contains(service);
+        return userPermissionDB.get(username).contains(service);
+    }
+
+    public void addPermission(String username, Service service) {
+        if(userPermissionDB.containsKey(username)) {
+            userPermissionDB.get(username).add(service);
+        } else {
+            ArrayList<Service> services = new ArrayList<Service>();
+            services.add(service);
+            userPermissionDB.put(username, services);
+        }
     }
 }

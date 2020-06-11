@@ -47,7 +47,7 @@ public class TicketGrantingServlet extends HttpServlet {
                 } else {
                     response.setContentType("application/json");
                     response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                    response.getWriter().println("{ \"status\": \"this user is not allowed\"}");
+                    response.getWriter().println("{ \"status\": \"this user is not allowed for this service\"}");
                 }
             } else {
                 response.setContentType("application/json");

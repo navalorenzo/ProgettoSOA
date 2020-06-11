@@ -10,6 +10,7 @@ import it.unimi.soa.message.service.MessageServiceResponse;
 import it.unimi.soa.message.tgs.MessageTGSRequest;
 import it.unimi.soa.message.tgs.MessageTGSResponse;
 import it.unimi.soa.otp.client.QRCode;
+import it.unimi.soa.rest.service.Service;
 import it.unimi.soa.ticket.AuthenticatorServerTicket;
 import it.unimi.soa.ticket.OTPTicket;
 import it.unimi.soa.utilities.CipherModule;
@@ -21,6 +22,9 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -86,6 +90,13 @@ public class KerberosClient {
         System.out.print("Password: ");
         String password = reader.nextLine();
 
+        // Get auth for services
+        System.out.print("Please, insert services (HELLO,BANK,...): ");
+        List<String> stringServices = Arrays.asList(reader.nextLine().split(","));
+        ArrayList<Service> services = new ArrayList<>();
+        for(String stringService : stringServices)
+            services.add(Service.valueOf(stringService));
+
         // Create the registration message
         try {
             // Generate the session key for the registration process
@@ -94,7 +105,7 @@ public class KerberosClient {
             secureRandom.setSeed(timestamp);
             long registrationSessionKey = secureRandom.nextLong();
 
-            MessageRegistrationRequest messageRegistrationRequest = new MessageRegistrationRequest().createJSONToken(username, password, String.valueOf(registrationSessionKey));
+            MessageRegistrationRequest messageRegistrationRequest = new MessageRegistrationRequest().createJSONToken(username, password, String.valueOf(registrationSessionKey), services);
 
             // Request registration
             MessageRegistrationResponse messageRegistrationResponse = requestRegistration(target, messageRegistrationRequest);
